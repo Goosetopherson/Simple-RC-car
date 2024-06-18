@@ -25,9 +25,9 @@ int _data[2];
 #define CE 2
 #define CSN 3
 // Motor Pins
+#define ENA 6
 #define IN1 7
 #define IN2 8
-#define ENA 9
 
 // Motor instance
 L298N motor(ENA, IN1, IN2);
@@ -51,22 +51,23 @@ void setup() {
   // initialize NRF module
   _radio.init(0, CE, CSN);
 
+  //motor speed initialized
+  motor.setSpeed(_speed);
+
   // attach servo
   servo.attach(5);
   servo.write(center);
-
-  //motor speed initialized
-  motor.setSpeed(_speed);
 }
 
 void loop() {
+
   while (_radio.hasData()) {
     _radio.readData(&_data);
 
     setValues(_data[0], _data[1]);
     moveMotor();
     printValues();
-
+    
     servo.write(_angle);
   }
 }
