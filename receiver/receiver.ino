@@ -10,6 +10,7 @@
 #include "NRFLite.h"
 #include <Servo.h> 
 #include <L298N.h>
+#include <EEPROM.h>
 
 // NRF module instance
 NRFLite _radio; // pins(MOSI - D11, VCC - 3.3V, MISO - D12, SCK - D13, CSN - D2, CE - D3, GND)
@@ -18,7 +19,7 @@ NRFLite _radio; // pins(MOSI - D11, VCC - 3.3V, MISO - D12, SCK - D13, CSN - D2,
 Servo servo;
 
 // array to hold the joystick values.
-int _data[2];
+int _data[5];
 
 // PIN DEFINITIONS
 //NRF24L01+ pins
@@ -36,7 +37,8 @@ L298N motor(ENA, IN1, IN2);
 // values for _angle and _speed
 int _speed = 0;
 int _angle = 0;
-int center = 50;  // specific to this servo. All servos must be checked for center
+int centerAdd = 0;
+int center = 0;  // specific to this servo. All servos must be checked for center
 
 // flag to check which direction to travel
 int direction = 0;
@@ -54,6 +56,13 @@ void setup() {
 
   //motor speed initialized
   motor.setSpeed(_speed);
+
+  if(EEPROM.read(centerAdd) < 0 || EEPROM.read(centerAdd) > 180){
+    center = 90;
+  }
+  else{
+    center = EEPROM.read(centerAdd);
+  }
 
   // attach servo
   servo.attach(5);
