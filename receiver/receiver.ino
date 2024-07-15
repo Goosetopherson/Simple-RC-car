@@ -57,11 +57,12 @@ void setup() {
   //motor speed initialized
   motor.setSpeed(_speed);
 
-  if(EEPROM.read(centerAdd) < 0 || EEPROM.read(centerAdd) > 180){
-    center = 90;
+  // check if we have previously stored a value for servo's center
+  if(EEPROM.read(centerAdd) >= 0 && EEPROM.read(centerAdd) <= 180){
+    center = EEPROM.read(centerAdd);
   }
   else{
-    center = EEPROM.read(centerAdd);
+    center = 90;
   }
 
   // attach servo
@@ -74,9 +75,21 @@ void loop() {
   while (_radio.hasData()) {
     _radio.readData(&_data);
 
+    if(_data[2] == 0){
+      if(_data[3] == 0){
+        center++;
+      }
+      if(_data[4] == 0){
+        center--;
+      }
+
+      Serial.println(center);
+      delay(100);
+    }
+
     setValues(_data[0], _data[1]);
     moveMotor();
-    printValues();
+    //printValues();
     
     servo.write(_angle);
     //printValues();
