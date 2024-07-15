@@ -8,11 +8,11 @@
 
 #include <SPI.h>
 #include "NRFLite.h"
-#include <Servo.h>
+#include <Servo.h> 
 #include <L298N.h>
 
 // NRF module instance
-NRFLite _radio;
+NRFLite _radio; // pins(MOSI - D11, VCC - 3.3V, MISO - D12, SCK - D13, CSN - D2, CE - D3, GND)
 
 // Servo instance
 Servo servo;
@@ -22,8 +22,9 @@ int _data[2];
 
 // PIN DEFINITIONS
 //NRF24L01+ pins
-#define CE 2
-#define CSN 3
+#define CE 9
+#define CSN 10
+
 // Motor Pins
 #define ENA 6
 #define IN1 7
@@ -69,7 +70,9 @@ void loop() {
     printValues();
     
     servo.write(_angle);
+    //printValues();
   }
+  
 }
 
 void setValues(int y, int x) {
@@ -89,9 +92,11 @@ void setValues(int y, int x) {
 
   // check the angle for servo
   if (x <= 500) {
+   // _angle = map(abs(x - 500), 0, 500, 0, 90);
     _angle = 180;
   }
   else if (x >= 510) {
+    //_angle = map(x, 500, 1023, 90, 180);
     _angle = 0;
   } 
   else {
@@ -112,9 +117,9 @@ void moveMotor() {
 
 void printValues() {
   // print out values for debugging
-  Serial.print("X : ");
+  Serial.print("Angle : ");
   Serial.print(_angle);
-  Serial.print(", Y : ");
+  Serial.print(", Speed : ");
   Serial.print(_speed);
   if (direction == 1) {
     Serial.println(" -- Moving Forward.");
@@ -123,5 +128,5 @@ void printValues() {
   } else {
     Serial.println(" -- Motor Stopped");
   }
-  Serial.println(motor.getSpeed());
+  //Serial.println(motor.getSpeed());
 }
