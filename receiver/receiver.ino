@@ -31,8 +31,13 @@ int _data[5];
 #define IN1 7
 #define IN2 8
 
+#define ENA_2 3
+#define IN1_2 4
+#define IN2_2 5
+
 // Motor instance
 L298N motor(ENA, IN1, IN2);
+L298N motor2(ENA_2, IN1_2, IN2_2);
 
 // values for _angle and _speed
 int _speed = 0;
@@ -56,6 +61,7 @@ void setup() {
 
   //motor speed initialized
   motor.setSpeed(_speed);
+  motor2.setSpeed(_speed);
 
   // check if we have previously stored a value for servo's center
   if(EEPROM.read(centerAdd) >= 0 && EEPROM.read(centerAdd) <= 180){
@@ -66,7 +72,7 @@ void setup() {
   }
 
   // attach servo
-  servo.attach(5);
+  servo.attach(2);
   servo.write(center);
 }
 
@@ -128,12 +134,16 @@ void setValues(int y, int x) {
 
 void moveMotor() {
   motor.setSpeed(_speed);
+  motor2.setSpeed(_speed);
   if (direction == 1) {
     motor.forward();
+    motor2.forward();
   } else if (direction == 2) {
     motor.backward();
+    motor2.backward();
   } else {
     motor.stop();
+    motor2.stop();
   }
 }
 
