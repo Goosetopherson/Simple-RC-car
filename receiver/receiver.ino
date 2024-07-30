@@ -64,11 +64,11 @@ void setup() {
   motor2.setSpeed(_speed);
 
   // check if we have previously stored a value for servo's center
-  if(EEPROM.read(centerAdd) >= 0 && EEPROM.read(centerAdd) <= 180){
+  if(EEPROM.read(centerAdd) > 0 && EEPROM.read(centerAdd) <= 180){
     center = EEPROM.read(centerAdd);
   }
   else{
-    center = 90;
+    center = 45;
   }
 
   // attach servo
@@ -121,11 +121,11 @@ void setValues(int y, int x) {
   // check the angle for servo
   if (x <= 500) {
    // _angle = map(abs(x - 500), 0, 500, 0, 90);
-    _angle = 180;
+    _angle = 0;
   }
   else if (x >= 510) {
     //_angle = map(x, 500, 1023, 90, 180);
-    _angle = 0;
+    _angle = 180;
   } 
   else {
     _angle = center;
