@@ -45,6 +45,9 @@ int _angle = 0;
 int centerAdd = 0;
 int center = 0;  // specific to this servo. All servos must be checked for center
 
+int trimState = 0;
+int newTrimState = 0;
+
 // flag to check which direction to travel
 int direction = 0;
 
@@ -82,6 +85,9 @@ void loop() {
     _radio.readData(&_data);
 
     if(_data[2] == 0){
+      if(trimState == newTrimState){
+        newTrimState = HIGH;
+      }
       if(_data[3] == 0){
         center++;
       }
@@ -89,8 +95,17 @@ void loop() {
         center--;
       }
 
-      Serial.println(center);
+      // Serial.println(center);
+      // Serial.print(trimState);
+      // Serial.println(newTrimState);
       delay(100);
+    }
+
+    if(_data[2] == 1 && trimState != newTrimState){
+      newTrimState = LOW;
+      EEPROM.update(centerAdd, center);
+      // Serial.print("New Trim: ");
+      // Serial.println(center);
     }
 
     setValues(_data[0], _data[1]);
