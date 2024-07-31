@@ -35,7 +35,7 @@ int _data[5];
 #define IN1_2 4
 #define IN2_2 5
 
-// Motor instance
+// Motor instances
 L298N motor(ENA, IN1, IN2);
 L298N motor2(ENA_2, IN1_2, IN2_2);
 
@@ -74,7 +74,7 @@ void setup() {
     center = 45;
   }
 
-  // attach servo
+  // attach servo and center it based on saved trim settings
   servo.attach(2);
   servo.write(center);
 }
@@ -84,6 +84,7 @@ void loop() {
   while (_radio.hasData()) {
     _radio.readData(&_data);
 
+    // check if we are receiving trim changes
     if(_data[2] == 0){
       if(trimState == newTrimState){
         newTrimState = HIGH;
@@ -95,25 +96,19 @@ void loop() {
         center--;
       }
 
-      // Serial.println(center);
-      // Serial.print(trimState);
-      // Serial.println(newTrimState);
       delay(100);
     }
 
+    // save trim settings to EEPROM if value has changed
     if(_data[2] == 1 && trimState != newTrimState){
       newTrimState = LOW;
       EEPROM.update(centerAdd, center);
-      // Serial.print("New Trim: ");
-      // Serial.println(center);
     }
 
     setValues(_data[0], _data[1]);
     moveMotor();
-    //printValues();
     
     servo.write(_angle);
-    //printValues();
   }
   
 }
